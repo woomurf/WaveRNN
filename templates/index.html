@@ -1,0 +1,109 @@
+<HTML>
+    <head>
+    </head>
+
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+            integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+        <!-- Project Title! -->
+        <title>Wave RNN TTS</title>    
+    </head>
+    <body>
+        <div class = "container">
+            <div class="jumbotron mt-3">
+                 <!-- Proejct Title -->
+                <h1>Wave RNN - Text2Speech</h1>
+                <!-- Github link and Ainize link -->
+                <A>Git Hub repository : </A> <A href=""> </A>
+                <br>
+                <A>Testing API : </A> <A href=""> on Ainize </A>
+
+                <hr class="solid">
+                
+                <!-- If your project have a input files -->
+                <h2>Upload </h2>
+                <div id = 'inputImage'>
+                    <label for="label1">Input Text: </label>
+                    <input type = 'text' id = 'input_text' style="margin-right: 10px; margin-bottom: 10px;">
+                    <br>
+                    <input type = "radio" name = 'batched' checked = 'checked' style="margin-right: 10px; margin-bottom: 10px;">
+                    <label for="label2">Batched ( low quality / short time )</label><br>
+                    <input type = "radio" name = 'batched' style="margin-right: 10px; margin-bottom: 10px;">
+                    <label for="label2">UnBatched ( high quality /super long long long long time )</label><br>
+                    
+                    <button id = "submit" type='submit' class="btn btn-primary btn-lg" style="margin-left: auto;"> submit </button>
+                </div>
+                
+                <!-- Result Box -->
+                <div id ='resultBox' style="margin-left: auto; margin-right: auto;">
+                    <p id='statusBox'></p>
+                    <audio id = "audioBox" controls="controls">
+                        <source id = "result" src=""></source>
+                    </audio>
+                </div>
+
+                <!-- onclick function, you can delete this if you want  -->
+                <script>
+                    window.location.origin = "localhost"
+                    document.getElementById("submit").onclick = () => {
+
+                        var loading = document.getElementById("statusBox");
+                        loading.innerHTML = "Loading..."
+                        
+                        var audioSource = document.getElementById("result")
+                        audioSource.src = "";
+                        
+                        var formData = new FormData();
+                        var input_text = document.getElementById("input_text").value
+                        var radios = document.getElementsByName("batched")
+                        var batched = "True"
+
+                        if (radios[1].checked){
+                            batched = "False"
+                        }
+                        
+                        formData.append("batched", batched)
+                        formData.append("input_text",input_text)
+                        
+                        fetch(
+                            '/tts',
+                            {
+                                method: 'POST',
+                                body: formData,
+                            }
+                        )
+                        .then(response=>{
+                            if (response.status==200){
+                                return response
+                            }
+                            else{
+                                throw Error("error")
+                            }
+                        })
+                        .then(response => response.blob())
+                        .then(blob => URL.createObjectURL(blob))
+                        .then(audioURL => {
+                            audioSource.src = audioURL;
+                            
+                            loading.innerHTML = "Done!"
+
+                            var audio = document.getElementById("audioBox")
+                            audio.load()
+                            audio.play()
+                        })
+                        .catch(error => {
+                            loading.innerHTML = error;
+                        })
+                    }
+
+                </script>
+            </div>
+        </div>
+    </body>
+</HTML>
+

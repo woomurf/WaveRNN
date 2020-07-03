@@ -33,7 +33,7 @@ if __name__ == "__main__":
                         help='The file to use for the hyperparameters')
     args = parser.parse_args()
 
-    hp.configure(args.hp_file)  # Load hparams from file
+    hp.configure('hparams.py')  # Load hparams from file
 
     parser.set_defaults(batched=True)
     parser.set_defaults(input_text=None)
@@ -102,6 +102,7 @@ if __name__ == "__main__":
                   ('Target Samples', 11_000 if batched else 'N/A'),
                   ('Overlap Samples', 550 if batched else 'N/A')])
 
+    wav_file = None 
     for i, x in enumerate(inputs, 1):
 
         print(f'\n| Generating {i}/{len(inputs)}')
@@ -117,6 +118,7 @@ if __name__ == "__main__":
         m = torch.tensor(m).unsqueeze(0)
         m = (m + 4) / 8
 
-        voc_model.generate(m, save_path, batched, 11_000, 550, hp.mu_law)
-
+        wav_file = voc_model.generate(m, save_path, batched, 11_000, 550, hp.mu_law)
+    
+    print("result type : {}".format(type(wav_file)))
     print('\n\nDone.\n')
