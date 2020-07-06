@@ -51,3 +51,4 @@ pip-delete-this-directory.txt
 __pycache__
 
 quick_start/*
+sound/*

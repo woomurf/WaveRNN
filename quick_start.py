@@ -7,6 +7,7 @@ import argparse
 from utils.text import text_to_sequence
 from utils.display import save_attention, simple_table
 import zipfile, os
+import tempfile 
 
 
 os.makedirs('quick_start/tts_weights/', exist_ok=True)
@@ -107,6 +108,7 @@ if __name__ == "__main__":
 
         print(f'\n| Generating {i}/{len(inputs)}')
         _, m, attention = tts_model.generate(x)
+
 
         if input_text:
             save_path = f'quick_start/__input_{input_text[:10]}_{tts_k}k.wav'

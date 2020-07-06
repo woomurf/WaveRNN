@@ -7,6 +7,8 @@ import argparse
 from utils.text import text_to_sequence
 from utils.display import save_attention, simple_table
 import zipfile, os
+import tempfile
+import uuid
 
 
 os.makedirs('quick_start/tts_weights/', exist_ok=True)
@@ -98,12 +100,7 @@ def getTTS(input_text=None, isBatched=True):
         print(f'\n| Generating {i}/{len(inputs)}')
         _, m, attention = tts_model.generate(x)
 
-        if input_text:
-            save_path = f'quick_start/__input_{input_text[:10]}_{tts_k}k.wav'
-        else:
-            save_path = f'quick_start/{i}_batched{str(batched)}_{tts_k}k.wav'
-
-        # save_attention(attention, save_path)
+        save_path = './sound/' + str(uuid.uuid4()) + '.wav'
 
         m = torch.tensor(m).unsqueeze(0)
         m = (m + 4) / 8

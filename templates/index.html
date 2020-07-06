@@ -12,6 +12,42 @@
 
         <!-- Project Title! -->
         <title>Wave RNN TTS</title>    
+
+        <style>
+            #loader {
+                z-index: 1;
+                width: 40px;
+                height: 40px;
+                /* margin: 30px 0px 0px 50px; */
+                border-top:20px;
+                border: 6px solid #f3f3f3;
+                border-radius: 50%;
+                border-top: 6px solid #3498db;
+                vertical-align:middle;
+                -webkit-animation: spin 3s linear infinite;
+                animation: spin 2s linear infinite;
+                }
+
+            @-webkit-keyframes spin {
+            0% { -webkit-transform: rotate(0deg); }
+            100% { -webkit-transform: rotate(360deg); }
+            }
+
+            @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+            }
+
+            #statusWraaper {
+                margin-left:10px;
+                margin-top: 20px;
+                margin-bottom: 20px;
+                vertical-align:baseline;
+                height: 40px;
+                display: inline-block;
+                text-align: center;
+            }
+        </style>
     </head>
     <body>
         <div class = "container">
@@ -19,14 +55,14 @@
                  <!-- Proejct Title -->
                 <h1>Wave RNN - Text2Speech</h1>
                 <!-- Github link and Ainize link -->
-                <A>Git Hub repository : </A> <A href=""> </A>
+                <A>Git Hub repository : </A> <A href="https://github.com/woomurf/WaveRNN">https://github.com/woomurf/WaveRNN</A>
                 <br>
                 <A>Testing API : </A> <A href=""> on Ainize </A>
 
                 <hr class="solid">
                 
                 <!-- If your project have a input files -->
-                <h2>Upload </h2>
+                <h2>Testing TTS </h2>
                 <div id = 'inputImage'>
                     <label for="label1">Input Text: </label>
                     <input type = 'text' id = 'input_text' style="margin-right: 10px; margin-bottom: 10px;">
@@ -41,7 +77,10 @@
                 
                 <!-- Result Box -->
                 <div id ='resultBox' style="margin-left: auto; margin-right: auto;">
-                    <p id='statusBox'></p>
+                    <div id ="loadingWraaper">
+                        <div id = "statusWraaper"><p id='statusBox'></p></div>
+                        <div id = "loader" style="display: none;"></div><br>
+                    </div>
                     <audio id = "audioBox" controls="controls">
                         <source id = "result" src=""></source>
                     </audio>
@@ -54,6 +93,7 @@
 
                         var loading = document.getElementById("statusBox");
                         loading.innerHTML = "Loading..."
+                        waiting();
                         
                         var audioSource = document.getElementById("result")
                         audioSource.src = "";
@@ -91,6 +131,7 @@
                             audioSource.src = audioURL;
                             
                             loading.innerHTML = "Done!"
+                            stopWaiting();
 
                             var audio = document.getElementById("audioBox")
                             audio.load()
@@ -99,6 +140,17 @@
                         .catch(error => {
                             loading.innerHTML = error;
                         })
+                    }
+
+                    function waiting(){
+                        var spining = document.getElementById("loader");
+                        spining.style.display = 'inline-block';
+
+                    }
+
+                    function stopWaiting(){
+                        var spining = document.getElementById("loader");
+                        spining.style.display = "none";
                     }
 
                 </script>

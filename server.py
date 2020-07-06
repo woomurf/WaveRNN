@@ -1,9 +1,8 @@
 from flask import Flask, render_template, send_file, request
 from flask_cors import CORS
 from ttsAPI import getTTS
-from scipy.io.wavfile import write, read 
-from io import BytesIO
-import soundfile as sf
+import numpy as np
+
 
 app = Flask(__name__, template_folder="./templates/")
 cors = CORS(app)
@@ -41,7 +40,7 @@ def preprocessing(input_text):
         result += text + " "
     
     result += texts[-1]
-    if texts[-1] != ".":
+    if texts[-1] not in [".", "?", "!"]:
         result += "."
     
     return result
