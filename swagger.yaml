@@ -1,0 +1,64 @@
+openapi: 3.0.0
+
+info:
+  title: WaveRNN Text to Speech 
+  description: |
+    Text to Speech is function that convert text to audio (speech)
+
+    This API use [WaveRNN](https://github.com/fatchord/WaveRNN).
+
+    You can test WaveRNN's quickstart [WebServer](https://wavernn-woomurf.endpoint.ainize.ai/).  **Not Here**
+
+    You can get curl command on here. if you use curl on terminal, you can get wav file.
+
+    ---
+
+    How to use: 
+    * Write input text.
+    * Select option batched or unbatched
+    * Execute and wait
+
+  version: "0.1"
+  license:
+    name: "MIT"
+
+servers:
+  - url: https://wavernn-woomurf.endpoint.ainize.ai/
+
+paths:
+  /tts:
+    post:
+      requestBody:
+        required: true
+        description: |
+          Batched option is low quality and take a short time.
+
+          Unbatched option is high quality and take a long time. (at least 1 minute.)
+
+          Time grows as text's length.
+
+          batched => True or False 
+        
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                input_text:
+                  type: string
+                batched:
+                  type: boolean
+      responses:
+        '200':
+          description: Success
+          content:
+            audio/wav:
+              schema:
+                type: string
+                format: binary
+        '400':
+          description: Bad Request
+        
+        '500':
+          description: Server side error
+

@@ -1,7 +1,9 @@
-from flask import Flask, render_template, send_file, request
+from flask import Flask, render_template, send_file, request, make_response
 from flask_cors import CORS
 from ttsAPI import getTTS
 import numpy as np
+from io import BytesIO
+
 
 
 app = Flask(__name__, template_folder="./templates/")
@@ -13,24 +15,17 @@ def index():
 
 @app.route("/tts", methods=["POST"])
 def generateTTS():
+
     input_text = request.form["input_text"]
     batched = request.form["batched"] 
 
     input_text = preprocessing(input_text)
-    
-    batched = True if batched=="True" else False
 
     wav_file = getTTS(input_text, batched)
     save_path = wav_file[1]
     wav_file = wav_file[0]
-    
+
     return send_file(save_path, mimetype="audio/wav")
-
-@app.route("/test", methods=["POST"])
-def test():
-    fs, data = read("./quick_start/1_batchedFalse_180K.wav")
-
-    return send_file(data, mimetype="audio/wav")
 
 def preprocessing(input_text):
     texts = input_text.split(" ")
