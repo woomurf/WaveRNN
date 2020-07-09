@@ -16,27 +16,41 @@ def index():
 @app.route("/tts", methods=["POST"])
 def generateTTS():
 
-    input_text = request.form["input_text"]
-    batched = request.form["batched"] 
+    try:
+        input_text = request.form["input_text"]
+        batched = request.form["batched"] 
+    except: 
+        return "", "400 Please Input text or Select option"
 
     input_text = preprocessing(input_text)
 
     status = input_handling(input_text)
 
     if status == 400:
-        return "input text error", 400
+        return "", "400 input text error"
 
-    wav_file = getTTS(input_text, batched)
+    try:
+        wav_file = getTTS(input_text, batched)
+    except:
+        return "", "500 Generating TTS error"
+
     save_path = wav_file[1]
     wav_file = wav_file[0]
 
     return send_file(save_path, mimetype="audio/wav")
 
 def input_handling(input_text):
-    if len(input_text) == 0:
-        return 400 
-    else:
-        return 200
+    splited = input_text.split(' ')
+    len_txt = ""
+
+    for word in splited:
+        len_txt += word
+
+    if len(len_txt) == 1:
+        if len_txt[-1] == '.': 
+            return 400 
+    
+    return 200
 
 
 def preprocessing(input_text):

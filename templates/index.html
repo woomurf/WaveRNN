@@ -122,7 +122,9 @@
                                 return response
                             }
                             else{
-                                throw Error("error")
+
+                                throw Error(response.statusText)
+
                             }
                         })
                         .then(response => response.blob())
@@ -139,6 +141,7 @@
                         })
                         .catch(error => {
                             loading.innerHTML = error;
+                            stopWaiting();
                         })
                     }
 
