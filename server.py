@@ -21,11 +21,23 @@ def generateTTS():
 
     input_text = preprocessing(input_text)
 
+    status = input_handling(input_text)
+
+    if status == 400:
+        return "input text error", 400
+
     wav_file = getTTS(input_text, batched)
     save_path = wav_file[1]
     wav_file = wav_file[0]
 
     return send_file(save_path, mimetype="audio/wav")
+
+def input_handling(input_text):
+    if len(input_text) == 0:
+        return 400 
+    else:
+        return 200
+
 
 def preprocessing(input_text):
     texts = input_text.split(" ")
