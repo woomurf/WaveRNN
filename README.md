@@ -1,6 +1,11 @@
 [![Run on Ainize](https://ainize.ai/static/images/run_on_ainize_button.svg)](https://ainize.web.app/redirect?git_repo=github.com/woomurf/WaveRNN)
 
-You can test WaveRNN TTS quickstart on Ainize.
+You can get information about API that is maked this project's quickstart TTS.
+
+
+The API is configured almost default setting and you can choose option `batched` or `unbatched`. 
+
+![Wave RNN ainized on web server](./static/wavernn_on_ainize.png)
 
 
 ---
