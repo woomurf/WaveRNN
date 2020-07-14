@@ -11,6 +11,8 @@ info:
 
     You can get curl command on here. if you use curl on terminal, you can get wav file.
 
+    **You don't test here. open api 3.0 not support to play audio/wav file.**
+
     ---
 
     How to use: 
@@ -31,6 +33,8 @@ paths:
       requestBody:
         required: true
         description: |
+          **You don't test here. open api 3.0 not support to play audio/wav file.**
+
           Batched option is low quality and take a short time.
 
           Unbatched option is high quality and take a long time. (at least 1 minute.)

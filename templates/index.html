@@ -122,9 +122,7 @@
                                 return response
                             }
                             else{
-
-                                throw Error(response.statusText)
-
+                                throw(Error(response.statusText))
                             }
                         })
                         .then(response => response.blob())
