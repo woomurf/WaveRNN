@@ -41,7 +41,7 @@ def getTTS(input_text, batched, voc_model, tts_model, hp):
         m = torch.tensor(m).unsqueeze(0)
         m = (m + 4) / 8
 
-        wav_file = voc_model.generate(m, save_path, batched, 11_000, 550, hp.mu_law)
+        wav_file = voc_model.generate(m, save_path, batched, 3000, 550, hp.mu_law)
         
         wav_list.append(wav_file)
         wav_list.append(save_path)
