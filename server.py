@@ -1,8 +1,9 @@
-from flask import Flask, render_template, send_file, request, jsonify, abort
+from flask import Flask, render_template, send_file, request, jsonify, abort, json
 from flask_cors import CORS
 from ttsAPI import getTTS
 import numpy as np
 from io import BytesIO
+import base64
 
 import torch
 from utils import hparams as hp
@@ -106,9 +107,17 @@ def generateTTS():
         return "", "500 Generating TTS error"
 
     save_path = wav_file[1]
-    wav_file = wav_file[0]
 
-    return send_file(save_path, mimetype="audio/wav")
+    with open(save_path, 'rb') as wav:
+        wav_bytes = wav.read()
+    
+    wav_io = BytesIO(wav_bytes)
+    wav_io.seek(0)
+
+    if os.path.exists(save_path):
+        os.remove(save_path)
+
+    return send_file(wav_io, mimetype="audio/wav")
 
 def input_handling(input_text):
     splited = input_text.split(' ')
@@ -138,4 +147,4 @@ def preprocessing(input_text):
     return result
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port="80", threaded=False, debug=True)
+    app.run(host="0.0.0.0", port="80", threaded=False)
