@@ -4,6 +4,9 @@ from ttsAPI import getTTS
 import numpy as np
 from io import BytesIO
 import base64
+from queue import Queue, Empty
+import time
+import threading
 
 import torch
 from utils import hparams as hp
@@ -80,31 +83,33 @@ tts_model.load('quick_start/tts_weights/latest_weights.pyt')
 
 ###########################################################################################################
 
-@app.route("/")
-def index():
-    return render_template('index.html')
+requests_queue = Queue()
+BATCH_SIZE = 1
+CHECK_INTERVAL = 0.1
 
-@app.route("/tts", methods=["POST"])
-def generateTTS():
+def handle_requests_by_batch():
+    while True:
+        requests_batch = []
+        while not (len(requests_batch) >= BATCH_SIZE):
+            try:
+                requests_batch.append(requests_queue.get(timeout=CHECK_INTERVAL))
+            except Empty:
+                continue
+            batch_outputs = []
+            for request in requests_batch:
+                batch_outputs.append(run(request['input'][0], request['input'][1]))
 
-    try:
-        input_text = request.form["input_text"]
-        batched = request.form["batched"] 
-    except: 
-        return "", "400 Please Input text or Select option"
+            for request, output in zip(requests_batch, batch_outputs):
+                request['output'] = output
+                
+threading.Thread(target=handle_requests_by_batch).start()
 
-    input_text = preprocessing(input_text)
-
-    status = input_handling(input_text)
-
-    if status == 400:
-        return "", "400 Input text error"
-
+def run(input_text, batched):
     try:
         wav_file = getTTS(input_text, batched, voc_model, tts_model, hp)
     except Exception as e:
         print(e)
-        return "", "500 Generating TTS error"
+        return jsonify({"error": "Generating TTS error"}), 500
 
     save_path = wav_file[1]
 
@@ -116,8 +121,41 @@ def generateTTS():
 
     if os.path.exists(save_path):
         os.remove(save_path)
+    
+    return wav_io
 
-    return send_file(wav_io, mimetype="audio/wav")
+
+@app.route("/")
+def index():
+    return render_template('index.html')
+
+@app.route("/tts", methods=["POST"])
+def generateTTS():
+    try:
+        input_text = request.form["input_text"]
+        batched = request.form["batched"] 
+    except: 
+        return jsonify({"error": "Please Input text or Select option"}), 400
+
+    input_text = preprocessing(input_text)
+
+    status = input_handling(input_text)
+
+    if status == 400:
+        return jsonify({"error":"Input text error"}), 400
+
+    if requests_queue.qsize() >= BATCH_SIZE:
+        return jsonify({"error":'Too Many Request'}), 429
+
+    req = {
+        'input': [input_text, batched]
+    }
+    requests_queue.put(req)
+
+    while 'output' not in req:
+        time.sleep(CHECK_INTERVAL)
+
+    return send_file(req['output'], mimetype="audio/wav")
 
 def input_handling(input_text):
     splited = input_text.split(' ')
@@ -147,4 +185,4 @@ def preprocessing(input_text):
     return result
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port="80", threaded=False)
+    app.run(host="0.0.0.0", port="80")
