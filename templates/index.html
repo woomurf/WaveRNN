@@ -57,8 +57,14 @@
                 <!-- Github link and Ainize link -->
                 <A>Git Hub repository : </A> <A href="https://github.com/woomurf/WaveRNN">https://github.com/woomurf/WaveRNN</A>
                 <br>
-                <A>Testing API : </A> <A href=""> on Ainize </A>
+                <A>Testing API : </A> <A href=""> on Ainize </A><br>
 
+                <h3>Notice</h3>
+                <ul>
+                    <li>Only English</li>
+                    <li>No Special Mark</li>
+                    <li>One Sentence</li>
+                </ul>
                 <hr class="solid">
                 
                 <!-- If your project have a input files -->
@@ -109,7 +115,8 @@
                         
                         formData.append("batched", batched)
                         formData.append("input_text",input_text)
-                        
+                        var status; 
+
                         fetch(
                             '/tts',
                             {
@@ -117,12 +124,18 @@
                                 body: formData,
                             }
                         )
-                        .then(response=>{
-                            if (response.status==200){
+                        .then(response => {
+                            if (response.status == 200){
                                 return response
                             }
-                            else{
-                                throw(Error(response.statusText))
+                            else if(response.status==400){
+                                throw Error("Input Text Error");
+                            }
+                            else if(response.status==429){
+                                throw Error("Too Many Request");
+                            }
+                            else if(response.status==500){
+                                throw Error("Generate TTS Error");
                             }
                         })
                         .then(response => response.blob())
