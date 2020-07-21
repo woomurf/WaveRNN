@@ -108,7 +108,16 @@ def generateTTS():
     save_path = wav_file[1]
     wav_file = wav_file[0]
 
-    return send_file(save_path, mimetype="audio/wav")
+    with open(save_path, 'rb') as wav:
+        wav_bytes = wav.read()
+    
+    wav_io = BytesIO(wav_bytes)
+    wav_io.seek(0)
+
+    if os.path.exists(save_path):
+        os.remove(save_path)
+
+    return send_file(wav_io, mimetype="audio/wav")
 
 def input_handling(input_text):
     splited = input_text.split(' ')
