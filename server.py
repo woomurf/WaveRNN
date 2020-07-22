@@ -157,6 +157,7 @@ def generateTTS():
 
     return send_file(req['output'], mimetype="audio/wav")
 
+
 def input_handling(input_text):
     splited = input_text.split(' ')
     len_txt = ""
