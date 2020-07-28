@@ -258,7 +258,7 @@ class WaveRNN(nn.Module):
         output[-20 * self.hop_length:] *= fade_out
 
         save_wav(output, save_path)
-
+    
         self.train()
 
         return output
