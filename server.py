@@ -109,7 +109,7 @@ def run(input_text, batched):
         wav_file = getTTS(input_text, batched, voc_model, tts_model, hp)
     except Exception as e:
         print(e)
-        return jsonify({"error": "Generating TTS error"}), 500
+        return 500
 
     save_path = wav_file[1]
 
@@ -155,6 +155,9 @@ def generateTTS():
     while 'output' not in req:
         time.sleep(CHECK_INTERVAL)
 
+    if req['output'] == 500:
+        return jsonify({'error': 'Generate TTS error!'}), 500
+    
     return send_file(req['output'], mimetype="audio/wav")
 
 
