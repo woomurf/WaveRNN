@@ -135,7 +135,7 @@ def generateTTS():
         input_text = request.form["input_text"]
         batched = request.form["batched"] 
     except: 
-        return jsonify({"error": "Please Input text or Select option"}), 400
+        return jsonify({"error": "Please check input text or selected option"}), 400
 
     input_text = preprocessing(input_text)
 

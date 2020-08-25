@@ -55,9 +55,9 @@
                  <!-- Proejct Title -->
                 <h1>Wave RNN - Text2Speech</h1>
                 <!-- Github link and Ainize link -->
-                <A>Git Hub repository : </A> <A href="https://github.com/woomurf/WaveRNN">https://github.com/woomurf/WaveRNN</A>
+                <A>Git Hub repository : </A> <A href="https://github.com/woomurf/WaveRNN" target="blank">https://github.com/woomurf/WaveRNN</A>
                 <br>
-                <A>Testing API : </A> <A href="https://ainize.ai/woomurf/WaveRNN"> on Ainize </A><br>
+                <A>Testing API : </A> <A href="https://ainize.ai/woomurf/WaveRNN" target="blank"> on Ainize </A><br>
                 <br>
                 <h3>Notice</h3>
                 <ul>
@@ -69,7 +69,12 @@
                 
                 <!-- If your project have a input files -->
                 <h2>Testing TTS </h2>
-                <p><b>Example:</b> Many people learn programming using python and javascript.</p>
+                <div id="sampleBox" style="margin-bottom:10px">
+                    <div ><b>Example:</b> Many people learn programming using python and javascript.</div>
+                    <audio controls="controls">
+                        <source id = "sample" src="sound/sample_audio.wav"></source>
+                </audio>
+                </div>
                 <div id = 'inputImage'>
                     <label for="label1">Input Text: </label>
                     <input type = 'text' id = 'input_text' style="margin-right: 10px; margin-bottom: 10px;">
@@ -168,14 +173,11 @@
                             if (response.status == 200){
                                 return response
                             }
-                            else if(response.status==400){
-                                throw Error("Input Text Error");
-                            }
-                            else if(response.status==429){
-                                throw Error("Too Many Request");
-                            }
-                            else if(response.status==500){
-                                throw Error("Generate TTS Error");
+                            else{
+                                response.json().then(response => {
+                                    loading.innerHTML = response['error'];
+                                })
+                                throw Error('error');
                             }
                         })
                         .then(response => response.blob())
@@ -191,7 +193,6 @@
                             audio.play()
                         })
                         .catch(error => {
-                            loading.innerHTML = error;
                             stopWaiting();
                         })
                     }
