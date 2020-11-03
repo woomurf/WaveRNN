@@ -7,6 +7,13 @@ The API is configured almost default setting and you can choose option `batched`
 
 ![Wave RNN ainized on web server](./static/wavernn_on_ainize.png)
 
+### How to use API? 
+```bash
+$ curl --location --request POST 'https://master-wave-rnn-woomurf.endpoint.ainize.ai/tts' \
+  --form 'input_text=test sentence' \
+  --form 'batched=True'
+```
+
 
 ---
 
